@@ -4,11 +4,18 @@ import { buildVideoRequest, normalizeTask, videoApi } from '../server/volcengine
 
 const authHeaders = { 'oai-authenticated-user-id': 'user-1' };
 
-test('buildVideoRequest creates a Seedance text request', () => {
-  const payload = buildVideoRequest({ title: 'AI 新闻', summary: '模型发布', why: '影响开发者', duration: 5, ratio: '16:9', style: '科技资讯' }, 'seedance-model');
+test('buildVideoRequest creates a Seedance request with narration audio', () => {
+  const payload = buildVideoRequest({ title: 'AI 新闻', summary: '模型发布', why: '影响开发者', duration: 5, ratio: '16:9', style: '科技资讯', audioMode: 'narration' }, 'seedance-model');
   assert.equal(payload.model, 'seedance-model');
   assert.equal(payload.duration, 5);
+  assert.equal(payload.generate_audio, true);
   assert.match(payload.content[0].text, /AI 新闻/);
+  assert.match(payload.content[0].text, /普通话女声旁白/);
+});
+
+test('buildVideoRequest can explicitly create a silent video', () => {
+  const payload = buildVideoRequest({ title: '标题', summary: '摘要', why: '解读', duration: 5, audioMode: 'mute' }, 'model');
+  assert.equal(payload.generate_audio, false);
 });
 
 test('buildVideoRequest rejects insecure reference URLs', () => {
@@ -35,7 +42,7 @@ test('create endpoint forwards request without exposing credentials', async () =
   };
   const request = new Request('https://site.test/api/video/tasks', {
     method: 'POST', headers: { ...authHeaders, origin: 'https://site.test' },
-    body: JSON.stringify({ title: '标题', summary: '摘要', why: '解读', duration: 5, ratio: '9:16', style: '科技资讯' }),
+    body: JSON.stringify({ title: '标题', summary: '摘要', why: '解读', duration: 5, ratio: '9:16', style: '科技资讯', audioMode: 'narration' }),
   });
   const response = await videoApi(request, { ARK_API_KEY: 'secret', ARK_VIDEO_MODEL_ID: 'model' }, fakeFetch);
   assert.equal(response.status, 201);

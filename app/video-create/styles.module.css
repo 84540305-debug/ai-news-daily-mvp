@@ -19,7 +19,7 @@
 .form input,.form select { height:46px; padding:0 13px; }
 .form textarea { padding:12px 13px; resize:vertical; line-height:1.65; }
 .form input:focus,.form textarea:focus,.form select:focus { border-color:#56736d; box-shadow:0 0 0 3px rgb(18 60 58 / 10%); }
-.options { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.options { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
 .upload { min-height:82px; padding:16px; display:flex; align-items:center; gap:13px; border:1px dashed #9baa9f; border-radius:12px; background:#eef1e9; cursor:pointer; }
 .upload > span { margin:0!important; }
 .upload strong,.upload small { display:block; }

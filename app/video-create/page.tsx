@@ -15,6 +15,7 @@ export default function VideoCreatePage() {
   const [duration, setDuration] = useState('5');
   const [style, setStyle] = useState('科技资讯');
   const [ratio, setRatio] = useState('16:9');
+  const [audioMode, setAudioMode] = useState('narration');
   const [imageUrl, setImageUrl] = useState('');
   const [service, setService] = useState<ServiceState>('checking');
   const [task, setTask] = useState<VideoTask | null>(null);
@@ -65,7 +66,7 @@ export default function VideoCreatePage() {
       const created = await readJson(await fetch('/api/video/tasks', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ title, summary, why, duration: Number(duration), style, ratio, imageUrl: imageUrl.trim() || undefined }),
+        body: JSON.stringify({ title, summary, why, duration: Number(duration), style, ratio, audioMode, imageUrl: imageUrl.trim() || undefined }),
       }));
       setTask(created);
       if (!terminalStates.has(created.status)) polling.current = window.setTimeout(() => pollTask(created.id), 3000);
@@ -107,6 +108,7 @@ export default function VideoCreatePage() {
               <label><span>样片时长</span><select value={duration} onChange={(event) => setDuration(event.target.value)}><option value="5">5 秒</option><option value="10">10 秒</option></select></label>
               <label><span>画面风格</span><select value={style} onChange={(event) => setStyle(event.target.value)}><option>科技资讯</option><option>简洁图文</option><option>未来电影感</option></select></label>
               <label><span>画面比例</span><select value={ratio} onChange={(event) => setRatio(event.target.value)}><option>16:9</option><option>9:16</option><option>1:1</option></select></label>
+              <label><span>视频声音</span><select value={audioMode} onChange={(event) => setAudioMode(event.target.value)}><option value="narration">中文旁白＋音乐</option><option value="ambience">音效＋音乐</option><option value="mute">静音</option></select></label>
             </div>
             <label><span>参考图片链接（可选）</span><input type="url" value={imageUrl} onChange={(event) => setImageUrl(event.target.value)} placeholder="https://…  请使用可公开访问的 HTTPS 图片" /></label>
             <button className={styles.primary} onClick={generateVideo} disabled={service !== 'ready' || busy || !title.trim() || !summary.trim() || !why.trim()}>
@@ -119,7 +121,7 @@ export default function VideoCreatePage() {
         <aside className={styles.storyboard}>
           <div className={styles.storyboardHead}><span>生成提示预览</span><small>{duration} 秒 · {style} · {ratio}</small></div>
           <div className={styles.scenes}>{scenes.map((scene, index) => <article key={scene.label}><span>0{index + 1}</span><div><strong>{scene.label}</strong><p>{scene.copy}</p></div></article>)}</div>
-          <div className={styles.voice}><Video size={17} /><span><strong>Seedance 画面样片</strong><small>带平台水印 · 完成后可在线播放</small></span></div>
+          <div className={styles.voice}><Video size={17} /><span><strong>Seedance 有声样片</strong><small>{audioMode === 'narration' ? '普通话旁白＋背景音乐' : audioMode === 'ambience' ? '环境音效＋背景音乐' : '静音视频'} · 带平台水印</small></span></div>
         </aside>
       </div>
 

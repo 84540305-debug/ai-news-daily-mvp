@@ -22,12 +22,19 @@ export function buildVideoRequest(input, model) {
   if (![5, 10].includes(duration)) fail('视频时长只支持 5 秒或 10 秒');
   const ratio = ['16:9', '9:16', '1:1'].includes(input.ratio) ? input.ratio : '16:9';
   const style = ['科技资讯', '简洁图文', '未来电影感'].includes(input.style) ? input.style : '科技资讯';
+  const audioMode = ['narration', 'ambience', 'mute'].includes(input.audioMode) ? input.audioMode : 'narration';
+  const audioPrompt = audioMode === 'narration'
+    ? '生成清晰自然的普通话女声旁白，并加入低音量科技感背景音乐；旁白内容准确概括新闻，不要念出网址。'
+    : audioMode === 'ambience'
+      ? '不要加入人物口播，只生成与画面同步的自然音效和低音量背景音乐。'
+      : '不要生成旁白、音乐或环境音。';
   const prompt = [
     `制作一支${duration}秒的中文 AI 新闻短视频。`,
     `标题：${title}`,
     `新闻摘要：${summary}`,
     `核心解读：${why}`,
     `视觉风格：${style}。画面清晰、节奏紧凑、镜头连贯，避免出现无法辨认的文字和品牌商标。`,
+    `声音要求：${audioPrompt}`,
   ].join('\n');
   const content = [{ type: 'text', text: prompt }];
   if (input.imageUrl) {
@@ -36,7 +43,7 @@ export function buildVideoRequest(input, model) {
     if (url.protocol !== 'https:') fail('参考图片必须使用 HTTPS 链接');
     content.push({ type: 'image_url', image_url: { url: url.href }, role: 'first_frame' });
   }
-  return { model, content, duration, ratio, watermark: true };
+  return { model, content, duration, ratio, generate_audio: audioMode !== 'mute', watermark: true };
 }
 
 export function normalizeTask(raw) {
