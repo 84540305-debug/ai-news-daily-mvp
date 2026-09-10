@@ -40,6 +40,15 @@ test('worker keeps video API requests on the server', async () => {
   });
 });
 
+test('worker keeps content API requests on the server', async () => {
+  let assetsCalled = false;
+  const response = await worker.fetch(new Request('https://example.com/api/content/config', {
+    headers: { 'oai-authenticated-user-id': 'test-user' },
+  }), { ASSETS: { fetch() { assetsCalled = true; } } });
+  assert.equal(assetsCalled, false);
+  assert.equal(response.status, 200);
+});
+
 test('worker reports a missing static asset binding', async () => {
   const response = await worker.fetch(new Request('https://example.com/'));
   assert.equal(response.status, 503);

@@ -1,3 +1,4 @@
+import { contentApi } from './content.mjs';
 import { videoApi } from './volcengine.mjs';
 
 export default {
@@ -6,6 +7,10 @@ export default {
 
     if (url.pathname.startsWith('/api/video/')) {
       return videoApi(request, env);
+    }
+
+    if (url.pathname.startsWith('/api/content/')) {
+      return contentApi(request, env);
     }
 
     if (!env.ASSETS?.fetch) {

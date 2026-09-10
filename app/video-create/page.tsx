@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertCircle, ArrowLeft, CheckCircle2, ExternalLink, LoaderCircle, Play, Sparkles, Video } from 'lucide-react';
+import { AlertCircle, ArrowLeft, CheckCircle2, ExternalLink, FileText, Link2, LoaderCircle, Play, Sparkles, Video } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styles from './styles.module.css';
 
@@ -17,6 +17,11 @@ export default function VideoCreatePage() {
   const [ratio, setRatio] = useState('16:9');
   const [audioMode, setAudioMode] = useState('narration');
   const [imageUrl, setImageUrl] = useState('');
+  const [sourceUrl, setSourceUrl] = useState('');
+  const [sourceText, setSourceText] = useState('');
+  const [sourceFile, setSourceFile] = useState('');
+  const [contentBusy, setContentBusy] = useState(false);
+  const [contentNotice, setContentNotice] = useState('');
   const [service, setService] = useState<ServiceState>('checking');
   const [task, setTask] = useState<VideoTask | null>(null);
   const [error, setError] = useState('');
@@ -76,6 +81,43 @@ export default function VideoCreatePage() {
     }
   }
 
+  async function analyzeContent() {
+    setError('');
+    setContentNotice('');
+    setContentBusy(true);
+    try {
+      const draft = await readJson(await fetch('/api/content/analyze', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ sourceUrl: sourceUrl.trim() || undefined, sourceText: sourceText.trim() || undefined }),
+      }));
+      setTitle(draft.title);
+      setSummary(draft.summary);
+      setWhy(draft.why);
+      setContentNotice(draft.generatedBy === 'ark' ? '火山方舟已生成文案，可继续修改后生成视频。' : '已生成基础文案；配置文字模型后可获得更深入的 AI 解读。');
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : '内容解析失败');
+    } finally {
+      setContentBusy(false);
+    }
+  }
+
+  async function loadTextFile(file?: File) {
+    if (!file) return;
+    setError('');
+    if (file.size > 100_000) {
+      setError('文字文件不能超过 100 KB');
+      return;
+    }
+    if (!/\.(txt|md|markdown)$/i.test(file.name)) {
+      setError('目前支持 TXT、MD 和 Markdown 文字文件');
+      return;
+    }
+    setSourceText(await file.text());
+    setSourceFile(file.name);
+    setContentNotice('文字文件已读取，点击“自动生成文案”继续。');
+  }
+
   const busy = Boolean(task && !terminalStates.has(task.status));
   const succeeded = task?.status === 'succeeded' || task?.status === 'completed';
 
@@ -91,7 +133,7 @@ export default function VideoCreatePage() {
         <section className={styles.editor}>
           <div className={styles.eyebrow}><Sparkles size={15} /> VOLCENGINE VIDEO</div>
           <h1>把新闻变成<br />可播放的视频</h1>
-          <p className={styles.lead}>新闻内容已自动带入。第一版直接生成 5–10 秒 Seedance 画面样片，确认风格后再扩展为多镜头长视频。</p>
+          <p className={styles.lead}>粘贴文字、上传文字文件或输入网页链接，系统会先整理成标题、摘要和解读，再生成带旁白与音乐的视频。</p>
 
           <div className={`${styles.service} ${styles[service]}`}>
             {service === 'checking' && <><LoaderCircle className={styles.spin} size={17} /> 正在检查视频服务</>}
@@ -100,7 +142,26 @@ export default function VideoCreatePage() {
             {service === 'error' && <><AlertCircle size={17} /> 暂时无法连接视频服务，请稍后刷新</>}
           </div>
 
+          <section className={styles.sourcePanel} aria-labelledby="source-heading">
+            <div className={styles.sourceHead}>
+              <div><small>STEP 01</small><h2 id="source-heading">导入内容并生成文案</h2></div>
+              <span>文字 / 链接 / TXT / MD</span>
+            </div>
+            <label><span><Link2 size={15} /> 内容链接（可选）</span><input type="url" value={sourceUrl} onChange={(event) => setSourceUrl(event.target.value)} placeholder="https://example.com/article" /></label>
+            <label><span><FileText size={15} /> 粘贴原始文字</span><textarea value={sourceText} onChange={(event) => setSourceText(event.target.value)} rows={6} maxLength={60000} placeholder="粘贴新闻、报告或视频素材说明……" /></label>
+            <label className={styles.upload}>
+              <FileText size={19} />
+              <span><strong>{sourceFile || '上传文字文件'}</strong><small>支持 TXT、MD，最大 100 KB；文件只在当前页面读取</small></span>
+              <input type="file" accept=".txt,.md,.markdown,text/plain,text/markdown" onChange={(event) => loadTextFile(event.target.files?.[0])} />
+            </label>
+            <button className={styles.secondary} onClick={analyzeContent} disabled={contentBusy || (!sourceUrl.trim() && !sourceText.trim())}>
+              {contentBusy ? <><LoaderCircle className={styles.spin} size={18} /> 正在读取并生成</> : <><Sparkles size={18} /> 自动生成文案</>}
+            </button>
+            {contentNotice && <p className={styles.contentNotice}><CheckCircle2 size={15} /> {contentNotice}</p>}
+          </section>
+
           <div className={styles.form}>
+            <div className={styles.stepTitle}><small>STEP 02</small><h2>确认文案与视频设置</h2></div>
             <label><span>视频标题</span><input value={title} onChange={(event) => setTitle(event.target.value)} maxLength={160} /></label>
             <label><span>新闻摘要</span><textarea value={summary} onChange={(event) => setSummary(event.target.value)} rows={4} maxLength={3000} /></label>
             <label><span>核心解读</span><textarea value={why} onChange={(event) => setWhy(event.target.value)} rows={3} maxLength={2000} /></label>
