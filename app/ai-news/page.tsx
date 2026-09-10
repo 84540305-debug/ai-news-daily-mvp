@@ -12,6 +12,7 @@ import {
   Search,
   Sparkles,
   TrendingUp,
+  Video,
   X,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -291,6 +292,7 @@ export default function AiNewsPage() {
                           {saved.includes(article.id) ? <Check size={16} /> : <Bookmark size={16} />}
                           {saved.includes(article.id) ? '已收藏' : '收藏'}
                         </button>
+                        <a className={styles.video} href={`/video-create?title=${encodeURIComponent(article.title)}&summary=${encodeURIComponent(article.summary)}&why=${encodeURIComponent(article.why)}`}><Video size={16} /> 生成视频</a>
                         <button className={styles.read}>阅读原文 <ArrowUpRight size={16} /></button>
                       </div>
                     </div>

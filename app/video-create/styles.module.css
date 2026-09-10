@@ -1,0 +1,41 @@
+.shell { --ink:#101a1a; --green:#123c3a; --lime:#c8ed3f; --paper:#f4f5f0; min-height:100vh; padding-bottom:70px; background:var(--paper); color:var(--ink); font-family:var(--font-geist-sans),"Microsoft YaHei",sans-serif; }
+.shell * { box-sizing:border-box; }
+.header { height:64px; padding:0 max(24px,calc((100vw - 1180px)/2)); display:grid; grid-template-columns:1fr auto 1fr; align-items:center; border-bottom:1px solid #d7ddd7; background:rgb(244 245 240 / 92%); backdrop-filter:blur(16px); }
+.header a { display:flex; align-items:center; gap:7px; color:#596560; font-size:14px; font-weight:700; text-decoration:none; }
+.header > span { display:flex; align-items:center; gap:9px; font-weight:850; }
+.header small { justify-self:end; padding:5px 8px; border-radius:6px; background:var(--green); color:white; font-size:11px; font-weight:800; }
+.layout { max-width:1180px; margin:0 auto; padding:54px 28px; display:grid; grid-template-columns:minmax(0,1.1fr) minmax(340px,.9fr); gap:54px; }
+.eyebrow { display:flex; align-items:center; gap:7px; color:#668000; font-size:12px; font-weight:850; letter-spacing:.13em; }
+.editor h1 { margin:18px 0 20px; font-size:clamp(46px,6vw,76px); line-height:.98; letter-spacing:-.065em; }
+.lead { max-width:650px; margin:0 0 34px; color:#596560; font-size:17px; line-height:1.75; }
+.form { display:flex; flex-direction:column; gap:18px; }
+.form label > span { display:block; margin-bottom:8px; color:#4e5a56; font-size:13px; font-weight:750; }
+.form input,.form textarea,.form select { width:100%; border:1px solid #cbd3cd; border-radius:11px; outline:none; background:white; color:var(--ink); font:inherit; font-size:15px; }
+.form input,.form select { height:46px; padding:0 13px; }
+.form textarea { padding:12px 13px; resize:vertical; line-height:1.65; }
+.form input:focus,.form textarea:focus,.form select:focus { border-color:#56736d; box-shadow:0 0 0 3px rgb(18 60 58 / 10%); }
+.options { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.upload { min-height:82px; padding:16px; display:flex; align-items:center; gap:13px; border:1px dashed #9baa9f; border-radius:12px; background:#eef1e9; cursor:pointer; }
+.upload > span { margin:0!important; }
+.upload strong,.upload small { display:block; }
+.upload small { margin-top:4px; color:#75807c; font-size:12px; font-weight:500; }
+.upload input { display:none; }
+.primary { height:50px; display:flex; align-items:center; justify-content:center; gap:9px; border:0; border-radius:11px; background:var(--green); color:white; font:inherit; font-weight:850; cursor:pointer; box-shadow:0 10px 24px rgb(18 60 58 / 18%); }
+.storyboard { position:sticky; top:28px; align-self:start; padding:24px; border:1px solid #ccd4cd; border-radius:18px; background:var(--green); color:white; box-shadow:0 24px 70px rgb(18 60 58 / 18%); }
+.storyboardHead { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.storyboardHead span { font-size:16px; font-weight:850; }
+.storyboardHead small { color:rgb(255 255 255 / 58%); font-size:12px; }
+.scenes { margin-top:22px; display:flex; flex-direction:column; gap:10px; }
+.scenes article { padding:14px; display:grid; grid-template-columns:30px 1fr; gap:11px; border:1px solid rgb(255 255 255 / 13%); border-radius:11px; background:rgb(255 255 255 / 7%); }
+.scenes article > span { color:var(--lime); font:700 12px var(--font-geist-mono),monospace; }
+.scenes strong { font-size:14px; }
+.scenes p { margin:6px 0 0; color:rgb(255 255 255 / 68%); font-size:13px; line-height:1.55; }
+.voice { margin-top:16px; padding:14px; display:flex; align-items:center; gap:11px; border-radius:11px; background:var(--lime); color:#253009; }
+.voice strong,.voice small { display:block; }
+.voice small { margin-top:3px; font-size:11px; opacity:.7; }
+.ready { max-width:1124px; margin:0 auto; padding:20px 22px; display:flex; align-items:flex-start; gap:13px; border:1px solid #9fb176; border-radius:14px; background:#eff8d4; color:#344414; }
+.ready svg { flex:none; margin-top:2px; }
+.ready strong { font-size:16px; }
+.ready p { margin:5px 0 0; font-size:14px; line-height:1.65; }
+@media(max-width:850px){.layout{grid-template-columns:1fr}.storyboard{position:static}.options{grid-template-columns:1fr}.header{padding:0 18px}.header>span{font-size:14px}.layout{padding:38px 18px}.ready{margin:0 18px}.editor h1{font-size:48px}}
+@media(max-width:520px){.header{grid-template-columns:1fr auto}.header>span{display:none}.editor h1{font-size:40px}.storyboard{padding:18px}}
