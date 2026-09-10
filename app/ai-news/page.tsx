@@ -6,9 +6,12 @@ import {
   CalendarDays,
   Check,
   ChevronRight,
+  Flame,
+  Gauge,
   Menu,
   Search,
   Sparkles,
+  TrendingUp,
   X,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -78,6 +81,33 @@ const editions = [
         source: 'Hugging Face',
         time: '14:20 · 4 分钟',
       },
+      {
+        id: 10,
+        category: 'AI 产品与应用',
+        title: '代码智能体开始承担跨文件修改与测试验证',
+        summary: '新一代开发工具不再局限于补全代码，而是能够理解仓库结构、修改多个文件，并根据测试结果继续迭代。',
+        why: '开发者的核心工作将更多转向任务拆解、结果审核和工程约束设计。',
+        source: 'GitHub · Anthropic',
+        time: '15:10 · 4 分钟',
+      },
+      {
+        id: 11,
+        category: '公司与融资',
+        title: '企业 AI 预算从试验项目转向可复用平台能力',
+        summary: '大型组织正在合并分散的 AI 试点，把模型接入、权限、评估和成本监控建设为统一平台。',
+        why: 'AI 采购的竞争焦点正从单点能力转向长期运维效率和组织复用率。',
+        source: 'The Information',
+        time: '16:00 · 3 分钟',
+      },
+      {
+        id: 12,
+        category: '政策与行业',
+        title: '教育机构更新生成式 AI 使用与引用规范',
+        summary: '多所高校开始区分可辅助使用、必须披露和明确禁止的场景，并要求保留关键生成过程。',
+        why: '透明披露和过程可追溯将成为教育类 AI 产品的重要设计要求。',
+        source: 'Nature · UNESCO',
+        time: '17:25 · 4 分钟',
+      },
     ] as Article[],
   },
   {
@@ -104,6 +134,15 @@ const editions = [
         why: '可靠性评估是智能体从演示走向生产环境的关键环节。',
         source: 'VentureBeat',
         time: '12:10 · 3 分钟',
+      },
+      {
+        id: 13,
+        category: '政策与行业',
+        title: '模型透明度报告逐渐形成标准化结构',
+        summary: '更多模型发布开始同步披露评测范围、已知限制、安全测试和适用边界。',
+        why: '结构化披露能帮助采购方更快判断模型是否适合真实业务。',
+        source: 'Stanford HAI',
+        time: '15:45 · 4 分钟',
       },
     ] as Article[],
   },
@@ -132,6 +171,15 @@ const editions = [
         source: 'Financial Times',
         time: '16:35 · 5 分钟',
       },
+      {
+        id: 14,
+        category: 'AI 产品与应用',
+        title: '客服 AI 开始引入实时质量评分与人工接管',
+        summary: '企业将置信度、敏感意图和用户情绪纳入实时监控，在高风险回答前自动转交人工。',
+        why: '人机协作机制比单纯追求自动化比例更能决定服务质量。',
+        source: 'Harvard Business Review',
+        time: '18:05 · 4 分钟',
+      },
     ] as Article[],
   },
 ];
@@ -143,11 +191,18 @@ export default function AiNewsPage() {
   const [category, setCategory] = useState('全部');
   const [saved, setSaved] = useState<number[]>([]);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [query, setQuery] = useState('');
   const edition = editions[editionIndex];
 
   const visible = useMemo(
-    () => category === '全部' ? edition.articles : edition.articles.filter((item) => item.category === category),
-    [category, edition],
+    () => edition.articles.filter((item) => {
+      const categoryMatch = category === '全部' || item.category === category;
+      const keyword = query.trim().toLowerCase();
+      const queryMatch = !keyword || `${item.title}${item.summary}${item.why}${item.source}`.toLowerCase().includes(keyword);
+      return categoryMatch && queryMatch;
+    }),
+    [category, edition, query],
   );
 
   function selectEdition(index: number) {
@@ -174,7 +229,7 @@ export default function AiNewsPage() {
             <a href="#sources">来源</a>
           </nav>
           <div className={styles.headerTools}>
-            <button aria-label="搜索"><Search size={18} /></button>
+            <button aria-label="搜索" aria-pressed={searchOpen} onClick={() => setSearchOpen(!searchOpen)}>{searchOpen ? <X size={18} /> : <Search size={18} />}</button>
             <button className={styles.menuButton} onClick={() => setMenuOpen(!menuOpen)} aria-label="打开菜单">
               {menuOpen ? <X size={19} /> : <Menu size={19} />}
             </button>
@@ -190,6 +245,7 @@ export default function AiNewsPage() {
       </header>
 
       <div id="top" className={styles.container}>
+        {searchOpen && <div className={styles.searchBar}><Search size={18} /><input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索标题、摘要或来源" /><span>{visible.length} 条结果</span></div>}
         <section id="today" className={styles.layout}>
           <div className={styles.content}>
             <div className={styles.hero}>
@@ -200,6 +256,15 @@ export default function AiNewsPage() {
               <div className={styles.count}><small>过去 24 小时</small><strong>{edition.articles.length} 条精选</strong><small>从 43 条候选中筛选</small></div>
             </div>
             <p className={styles.intro}>{edition.intro}</p>
+
+            <section className={styles.briefing} aria-label="今日速览">
+              <div className={styles.briefingTitle}><span><Flame size={17} /> 今日速览</span><small>2 分钟掌握核心变化</small></div>
+              <div className={styles.briefingGrid}>
+                <article><span>01</span><p><strong>交互入口变化</strong>实时语音与视觉理解，正在把 AI 从工具变成持续协作者。</p></article>
+                <article><span>02</span><p><strong>商业化重点</strong>推理成本、任务完成率和平台复用率成为企业关注指标。</p></article>
+                <article><span>03</span><p><strong>治理要求前移</strong>内容标识、使用披露和人工接管开始进入产品界面。</p></article>
+              </div>
+            </section>
 
             <div className={styles.tabs} role="tablist" aria-label="按主题筛选">
               {categories.map((item) => (
@@ -253,9 +318,22 @@ export default function AiNewsPage() {
               <p>“AI 能否稳定完成工作”，正在取代“AI 能否给出惊艳回答”。</p>
               <small>编辑观察</small>
             </section>
+            <section className={styles.pulse}>
+              <h2 className={styles.eyebrow}>今日脉搏</h2>
+              <div className={styles.pulseRow}><span><TrendingUp size={15} /> 智能体落地</span><b>高关注</b></div>
+              <div className={styles.meter}><i style={{ width: '88%' }} /></div>
+              <div className={styles.pulseRow}><span><Gauge size={15} /> 推理效率</span><b>持续升温</b></div>
+              <div className={styles.meter}><i style={{ width: '74%' }} /></div>
+              <div className={styles.pulseRow}><span><Sparkles size={15} /> 多模态交互</span><b>加速演进</b></div>
+              <div className={styles.meter}><i style={{ width: '81%' }} /></div>
+            </section>
+            <section className={styles.topicWatch}>
+              <h2 className={styles.eyebrow}>持续关注</h2>
+              <div>{['实时多模态', '代码智能体', '端侧模型', 'AI 治理', '推理成本', '企业工作流'].map((item) => <span key={item}>{item}</span>)}</div>
+            </section>
             <section id="sources" className={styles.sources}>
               <h2 className={styles.eyebrow}>本期来源</h2>
-              <div>{['OpenAI', 'DeepMind', 'Reuters', 'Hugging Face', 'MIT Tech Review'].map((item) => <span key={item}>{item}</span>)}</div>
+              <div>{['OpenAI', 'DeepMind', 'Reuters', 'Hugging Face', 'MIT Tech Review', 'GitHub', 'Nature', 'UNESCO'].map((item) => <span key={item}>{item}</span>)}</div>
               <button>查看全部来源 <ArrowUpRight size={14} /></button>
             </section>
           </aside>
