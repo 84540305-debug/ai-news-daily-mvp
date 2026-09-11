@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 
-$pptxPath = (Resolve-Path 'reports\AI新闻日报网站设计与部署汇报-基础版-v2.pptx').Path
+$pptxPath = (Resolve-Path 'reports\AI新闻日报网站设计与部署汇报-基础版-v3.pptx').Path
 $videoPath = (Resolve-Path 'media\ai-news-video-30s.mp4').Path
 $outputPath = Join-Path (Split-Path $pptxPath) 'AI新闻日报网站设计与部署汇报.pptx'
 if (Test-Path -LiteralPath $outputPath) {
@@ -17,7 +17,7 @@ try {
   $presentation.SaveAs($outputPath, 24)
 } finally {
   $presentation.Close()
-  $powerPoint.Quit()
+  try { $powerPoint.Quit() } catch { }
   [System.Runtime.InteropServices.Marshal]::ReleaseComObject($presentation) | Out-Null
   [System.Runtime.InteropServices.Marshal]::ReleaseComObject($powerPoint) | Out-Null
 }

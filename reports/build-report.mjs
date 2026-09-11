@@ -7,9 +7,11 @@ const workspaceDir = path.resolve(".");
 const skillDir = "C:/Users/86158/.codex/plugins/cache/openai-primary-runtime/presentations/26.909.12148/skills/presentations";
 const buildDir = path.join(workspaceDir, ".ppt-build");
 const outputDir = path.join(workspaceDir, "reports");
-const finalPptx = path.join(outputDir, "AI新闻日报网站设计与部署汇报-基础版-v2.pptx");
+const finalPptx = path.join(outputDir, "AI新闻日报网站设计与部署汇报-基础版-v3.pptx");
 const screenshotPath = path.join(outputDir, "assets", "site-overview.png");
 const screenshot = new Uint8Array(await fs.readFile(screenshotPath));
+const videoFramePath = path.join(outputDir, "assets", "video-frame.png");
+const videoFrame = new Uint8Array(await fs.readFile(videoFramePath));
 const { makeNativeBulletParagraphs, finalizePresentation } = await import(
   pathToFileURL(path.join(skillDir, "container_tools/artifact_tool_utils.mjs")).href,
 );
@@ -306,8 +308,7 @@ function note(slide, value) {
 // 12 Risks and links
 {
   const s = deck.slides.add(); s.background.fill = C.bg; title(s, "发布链接与注意事项", "建议优先使用线上网站，视频与 PPT 通过 GitHub 下载后本地播放");
-  box(s, 66, 180, 560, 420, C.panel, 22, C.line);
-  text(s, "发布链接", 94, 210, 240, 34, 25, C.green, { bold: true });
+  text(s, "发布链接", 70, 176, 180, 32, 24, C.green, { bold: true });
   const links = [
     ["线上网站", "https://wildpath-notes.berry-clove-3018.chatgpt.site"],
     ["视频工作台", "https://wildpath-notes.berry-clove-3018.chatgpt.site/video-create"],
@@ -315,22 +316,26 @@ function note(slide, value) {
     ["30 秒视频", "https://github.com/84540305-debug/ai-news-daily-mvp/blob/main/media/ai-news-video-30s.mp4"],
     ["汇报 PPT", "https://github.com/84540305-debug/ai-news-daily-mvp/blob/main/reports/AI新闻日报网站设计与部署汇报.pptx"],
   ];
-  let y = 270;
+  let y = 222;
   for (const [label, uri] of links) {
-    text(s, label, 94, y, 125, 28, 16, C.text, { bold: true });
-    const linkShape = text(s, uri.replace("https://", ""), 225, y, 365, 38, 13, C.cyan, { autoFit: "shrinkText" });
+    text(s, label, 70, y, 105, 22, 14, C.text, { bold: true });
+    const linkShape = text(s, uri.replace("https://", ""), 178, y, 585, 25, 12, C.cyan, { autoFit: "shrinkText" });
     linkShape.text.get(uri.replace("https://", "")).link = { uri, isExternal: true };
-    y += 62;
+    y += 31;
   }
-  box(s, 660, 180, 550, 420, "#101B19", 22, C.line);
-  text(s, "上线注意事项", 690, 210, 260, 34, 25, C.amber, { bold: true });
+  text(s, "网站页面", 70, 398, 180, 24, 15, C.muted, { bold: true });
+  text(s, "视频画面", 426, 398, 180, 24, 15, C.muted, { bold: true });
+  s.images.add({ blob: screenshot, contentType: "image/png", alt: "FrameFlow 已发布网站页面", fit: "cover", position: { left: 70, top: 430, width: 330, height: 186 }, geometry: "roundRect", borderRadius: 14 });
+  s.images.add({ blob: videoFrame, contentType: "image/png", alt: "30 秒视频内容截图", fit: "cover", position: { left: 426, top: 430, width: 330, height: 186 }, geometry: "roundRect", borderRadius: 14 });
+  box(s, 800, 176, 410, 440, "#101B19", 22, C.line);
+  text(s, "上线注意事项", 830, 208, 260, 34, 24, C.amber, { bold: true });
   addBullets(s, [
     "任何 API Key 都不得写入前端、截图、PPT 或 Git 仓库",
     "真实视频会产生费用，确认后只提交一次，不自动重试",
     "模型结果链接可能过期，完成后应及时下载并归档",
     "字幕、事实准确性、旁白和背景音乐音量需人工复核",
     "内嵌视频建议使用桌面版 Microsoft PowerPoint 播放",
-  ], 690, 275, 455, 255, 17, C.text);
+  ], 830, 270, 330, 280, 16, C.text);
   footer(s, 12);
   note(s, "链接均为项目正式交付地址。GitHub 大文件在线预览能力有限，下载后播放或打开 PPT 更稳定。 ");
 }
@@ -362,7 +367,7 @@ await finalizePresentation({
   layoutArgs: ["--expected-slide-size-emu", "12192000,6858000", "--validate-bullet-geometry", "--validate-heading-fit"],
   fontPolicy: { basis: "design", families: [FONT, MONO] },
   verifyArtifactToolImport: true,
-  receiptPath: path.join(buildDir, "presentation-v2.validation.json"),
+  receiptPath: path.join(buildDir, "presentation-v3.validation.json"),
 });
 
 console.log(finalPptx);
