@@ -14,6 +14,7 @@ ARK_VIDEO_MODEL_ID=doubao-seedance-2-5-260628
 
 当前视频模型使用 `Doubao-Seedance-2.5`。旧的
 `doubao-seedance-1-5-pro-251215` 已停止接受调用，不应继续用于生产环境。
+视频工作台支持生成 5 秒、10 秒或 30 秒样片。
 
 ## 验证流程
 

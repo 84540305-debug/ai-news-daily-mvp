@@ -24,7 +24,7 @@ export function buildVideoRequest(input, model) {
   const summary = text(input.summary, '新闻摘要', 3000);
   const why = text(input.why, '核心解读', 2000);
   const duration = Number(input.duration);
-  if (![5, 10].includes(duration)) fail('视频时长只支持 5 秒或 10 秒');
+  if (![5, 10, 30].includes(duration)) fail('视频时长只支持 5 秒、10 秒或 30 秒');
   const ratio = ['16:9', '9:16', '1:1'].includes(input.ratio) ? input.ratio : '16:9';
   const style = ['科技资讯', '简洁图文', '未来电影感'].includes(input.style) ? input.style : '科技资讯';
   const audioMode = ['narration', 'ambience', 'mute'].includes(input.audioMode) ? input.audioMode : 'narration';

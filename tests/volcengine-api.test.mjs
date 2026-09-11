@@ -20,6 +20,16 @@ test('buildVideoRequest can explicitly create a silent video', () => {
   assert.equal(payload.generate_audio, false);
 });
 
+test('buildVideoRequest supports a 30-second Seedance 2.5 video', () => {
+  const payload = buildVideoRequest({ title: '标题', summary: '摘要', why: '解读', duration: 30, ratio: '16:9', audioMode: 'narration' }, 'model');
+  assert.match(payload.content[0].text, /制作一支30秒/);
+  assert.match(payload.content[0].text, /--duration 30 --ratio 16:9/);
+});
+
+test('buildVideoRequest rejects unsupported durations', () => {
+  assert.throws(() => buildVideoRequest({ title: '标题', summary: '摘要', why: '解读', duration: 15 }, 'model'), /5 秒、10 秒或 30 秒/);
+});
+
 test('buildVideoRequest rejects insecure reference URLs', () => {
   assert.throws(() => buildVideoRequest({ title: '标题', summary: '摘要', why: '解读', duration: 5, imageUrl: 'http://example.com/a.jpg' }, 'model'), /HTTPS/);
 });

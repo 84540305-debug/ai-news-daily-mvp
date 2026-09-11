@@ -166,7 +166,7 @@ export default function VideoCreatePage() {
             <label><span>新闻摘要</span><textarea value={summary} onChange={(event) => setSummary(event.target.value)} rows={4} maxLength={3000} /></label>
             <label><span>核心解读</span><textarea value={why} onChange={(event) => setWhy(event.target.value)} rows={3} maxLength={2000} /></label>
             <div className={styles.options}>
-              <label><span>样片时长</span><select value={duration} onChange={(event) => setDuration(event.target.value)}><option value="5">5 秒</option><option value="10">10 秒</option></select></label>
+              <label><span>样片时长</span><select value={duration} onChange={(event) => setDuration(event.target.value)}><option value="5">5 秒</option><option value="10">10 秒</option><option value="30">30 秒</option></select></label>
               <label><span>画面风格</span><select value={style} onChange={(event) => setStyle(event.target.value)}><option>科技资讯</option><option>简洁图文</option><option>未来电影感</option></select></label>
               <label><span>画面比例</span><select value={ratio} onChange={(event) => setRatio(event.target.value)}><option>16:9</option><option>9:16</option><option>1:1</option></select></label>
               <label><span>视频声音</span><select value={audioMode} onChange={(event) => setAudioMode(event.target.value)}><option value="narration">中文旁白＋音乐</option><option value="ambience">音效＋音乐</option><option value="mute">静音</option></select></label>
