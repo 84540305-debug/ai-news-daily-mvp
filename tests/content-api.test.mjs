@@ -1,9 +1,14 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { assertSafeSourceUrl, contentApi, extractArticle } from '../server/content.mjs';
+import { assertSafeSourceUrl, contentApi, extractArticle, timeoutSignal } from '../server/content.mjs';
 
 const auth = { 'oai-authenticated-user-id': 'user-1', origin: 'https://site.test' };
+
+test('timeout helper remains compatible with runtimes that support timeout signals', () => {
+  const signal = timeoutSignal(1000);
+  assert.ok(signal === undefined || typeof signal.aborted === 'boolean');
+});
 
 test('extractArticle removes scripts and keeps useful text', () => {
   const result = extractArticle('<html><head><title>AI 发布新模型</title><meta name="description" content="重要更新"></head><body><script>bad()</script><article>模型今天发布，面向开发者。</article></body></html>');

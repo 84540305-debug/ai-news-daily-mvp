@@ -1,6 +1,11 @@
 const DEFAULT_BASE_URL = 'https://ark.cn-beijing.volces.com/api/v3';
 const taskIdPattern = /^[A-Za-z0-9_-]{6,160}$/;
 
+export const timeoutSignal = (milliseconds) =>
+  typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function'
+    ? AbortSignal.timeout(milliseconds)
+    : undefined;
+
 const json = (value, status = 200) =>
   Response.json(value, { status, headers: { 'cache-control': 'no-store' } });
 
@@ -103,7 +108,7 @@ export async function videoApi(request, env, fetchImpl = fetch) {
       const result = await arkFetch('/contents/generations/tasks', {
         method: 'POST',
         body: JSON.stringify(payload),
-        signal: AbortSignal.timeout(30000),
+        signal: timeoutSignal(30000),
       }, env, fetchImpl);
       const task = normalizeTask(result);
       if (!task.id || !taskIdPattern.test(task.id)) fail('火山方舟没有返回有效的任务编号', 502);
@@ -114,7 +119,7 @@ export async function videoApi(request, env, fetchImpl = fetch) {
     if (match && request.method === 'GET') {
       const result = await arkFetch(`/contents/generations/tasks/${encodeURIComponent(match[1])}`, {
         method: 'GET',
-        signal: AbortSignal.timeout(20000),
+        signal: timeoutSignal(20000),
       }, env, fetchImpl);
       return json(normalizeTask(result));
     }

@@ -2,6 +2,11 @@ const DEFAULT_BASE_URL = 'https://ark.cn-beijing.volces.com/api/v3';
 const MAX_SOURCE_LENGTH = 60000;
 const MAX_REMOTE_BYTES = 1024 * 1024;
 
+export const timeoutSignal = (milliseconds) =>
+  typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function'
+    ? AbortSignal.timeout(milliseconds)
+    : undefined;
+
 const json = (value, status = 200) =>
   Response.json(value, { status, headers: { 'cache-control': 'no-store' } });
 
@@ -85,7 +90,7 @@ async function fetchArticle(sourceUrl, fetchImpl) {
   let url = assertSafeSourceUrl(sourceUrl);
   for (let redirects = 0; redirects <= 3; redirects += 1) {
     const response = await fetchImpl(url, {
-      method: 'GET', redirect: 'manual', signal: AbortSignal.timeout(15000),
+      method: 'GET', redirect: 'manual', signal: timeoutSignal(15000),
       headers: { accept: 'text/html,text/plain;q=0.9', 'user-agent': 'FrameFlow/1.0 content importer' },
     });
     if ([301, 302, 303, 307, 308].includes(response.status)) {
@@ -131,7 +136,7 @@ async function generateDraft(source, preferredTitle, env, fetchImpl) {
   const base = String(env.ARK_BASE_URL || DEFAULT_BASE_URL).replace(/\/$/, '');
   if (!base.startsWith('https://')) fail('火山方舟接口地址配置无效', 503);
   const response = await fetchImpl(`${base}/chat/completions`, {
-    method: 'POST', redirect: 'error', signal: AbortSignal.timeout(30000),
+    method: 'POST', redirect: 'error', signal: timeoutSignal(30000),
     headers: { authorization: `Bearer ${env.ARK_API_KEY}`, 'content-type': 'application/json' },
     body: JSON.stringify({
       model: env.ARK_TEXT_MODEL_ID,
@@ -176,6 +181,11 @@ export async function contentApi(request, env = {}, fetchImpl = fetch) {
     const draft = await generateDraft(combined, article?.title || '', env, fetchImpl);
     return json({ ...draft, importedUrl: article?.url || null });
   } catch (error) {
+    console.error('content_api_failure', {
+      name: error instanceof Error ? error.name : typeof error,
+      message: error instanceof Error ? error.message : 'unknown error',
+      status: error?.status || null,
+    });
     return json({ error: error?.status ? error.message : '内容生成暂时不可用，请稍后重试' }, error?.status || 502);
   }
 }
