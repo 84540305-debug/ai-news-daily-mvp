@@ -69,7 +69,7 @@ async function arkFetch(path, init, env, fetchImpl) {
   if (!base.startsWith('https://')) fail('火山方舟接口地址配置无效', 503);
   const response = await fetchImpl(`${base}${path}`, {
     ...init,
-    redirect: 'error',
+    redirect: 'manual',
     headers: {
       authorization: `Bearer ${env.ARK_API_KEY}`,
       'content-type': 'application/json',

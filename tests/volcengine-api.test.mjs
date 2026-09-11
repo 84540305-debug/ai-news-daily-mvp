@@ -47,5 +47,6 @@ test('create endpoint forwards request without exposing credentials', async () =
   const response = await videoApi(request, { ARK_API_KEY: 'secret', ARK_VIDEO_MODEL_ID: 'model' }, fakeFetch);
   assert.equal(response.status, 201);
   assert.equal(received.url, 'https://ark.cn-beijing.volces.com/api/v3/contents/generations/tasks');
+  assert.equal(received.init.redirect, 'manual');
   assert.equal(received.init.headers.authorization, 'Bearer secret');
 });

@@ -136,7 +136,7 @@ async function generateDraft(source, preferredTitle, env, fetchImpl) {
   const base = String(env.ARK_BASE_URL || DEFAULT_BASE_URL).replace(/\/$/, '');
   if (!base.startsWith('https://')) fail('火山方舟接口地址配置无效', 503);
   const response = await fetchImpl(`${base}/chat/completions`, {
-    method: 'POST', redirect: 'error', signal: timeoutSignal(30000),
+    method: 'POST', redirect: 'manual', signal: timeoutSignal(30000),
     headers: { authorization: `Bearer ${env.ARK_API_KEY}`, 'content-type': 'application/json' },
     body: JSON.stringify({
       model: env.ARK_TEXT_MODEL_ID,
