@@ -136,11 +136,12 @@ async function generateDraft(source, preferredTitle, env, fetchImpl) {
   const base = String(env.ARK_BASE_URL || DEFAULT_BASE_URL).replace(/\/$/, '');
   if (!base.startsWith('https://')) fail('火山方舟接口地址配置无效', 503);
   const response = await fetchImpl(`${base}/chat/completions`, {
-    method: 'POST', redirect: 'manual', signal: timeoutSignal(30000),
+    method: 'POST', redirect: 'manual', signal: timeoutSignal(60000),
     headers: { authorization: `Bearer ${env.ARK_API_KEY}`, 'content-type': 'application/json' },
     body: JSON.stringify({
       model: env.ARK_TEXT_MODEL_ID,
       temperature: 0.3,
+      thinking: { type: 'disabled' },
       response_format: { type: 'json_object' },
       messages: [
         { role: 'system', content: '你是中文新闻视频编辑。只输出 JSON，字段为 title、summary、why。标题简洁准确；摘要保留事实；核心解读说明影响，不编造数据。' },

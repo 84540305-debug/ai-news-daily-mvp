@@ -54,4 +54,5 @@ test('content endpoint imports a public article and calls Ark text generation', 
   assert.equal(calls[1].url, 'https://ark.cn-beijing.volces.com/api/v3/chat/completions');
   assert.equal(calls[1].init.redirect, 'manual');
   assert.equal(calls[1].init.headers.authorization, 'Bearer secret');
+  assert.deepEqual(JSON.parse(calls[1].init.body).thinking, { type: 'disabled' });
 });
