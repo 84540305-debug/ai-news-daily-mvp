@@ -40,6 +40,7 @@ export function buildVideoRequest(input, model) {
     `核心解读：${why}`,
     `视觉风格：${style}。画面清晰、节奏紧凑、镜头连贯，避免出现无法辨认的文字和品牌商标。`,
     `声音要求：${audioPrompt}`,
+    `--duration ${duration} --ratio ${ratio} --camerafixed false --watermark true`,
   ].join('\n');
   const content = [{ type: 'text', text: prompt }];
   if (input.imageUrl) {
@@ -48,7 +49,7 @@ export function buildVideoRequest(input, model) {
     if (url.protocol !== 'https:') fail('参考图片必须使用 HTTPS 链接');
     content.push({ type: 'image_url', image_url: { url: url.href }, role: 'first_frame' });
   }
-  return { model, content, duration, ratio, generate_audio: audioMode !== 'mute', watermark: true };
+  return { model, content, generate_audio: audioMode !== 'mute' };
 }
 
 export function normalizeTask(raw) {

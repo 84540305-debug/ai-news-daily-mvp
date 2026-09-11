@@ -7,10 +7,12 @@ const authHeaders = { 'oai-authenticated-user-id': 'user-1' };
 test('buildVideoRequest creates a Seedance request with narration audio', () => {
   const payload = buildVideoRequest({ title: 'AI 新闻', summary: '模型发布', why: '影响开发者', duration: 5, ratio: '16:9', style: '科技资讯', audioMode: 'narration' }, 'seedance-model');
   assert.equal(payload.model, 'seedance-model');
-  assert.equal(payload.duration, 5);
+  assert.equal(payload.duration, undefined);
+  assert.equal(payload.ratio, undefined);
   assert.equal(payload.generate_audio, true);
   assert.match(payload.content[0].text, /AI 新闻/);
   assert.match(payload.content[0].text, /普通话女声旁白/);
+  assert.match(payload.content[0].text, /--duration 5 --ratio 16:9 --camerafixed false --watermark true/);
 });
 
 test('buildVideoRequest can explicitly create a silent video', () => {
