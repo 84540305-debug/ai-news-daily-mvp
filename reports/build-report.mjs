@@ -7,7 +7,7 @@ const workspaceDir = path.resolve(".");
 const skillDir = "C:/Users/86158/.codex/plugins/cache/openai-primary-runtime/presentations/26.909.12148/skills/presentations";
 const buildDir = path.join(workspaceDir, ".ppt-build");
 const outputDir = path.join(workspaceDir, "reports");
-const finalPptx = path.join(outputDir, "AI新闻日报网站设计与部署汇报-基础版-v3.pptx");
+const finalPptx = path.join(outputDir, "AI新闻日报网站设计与部署汇报-基础版-v4.pptx");
 const screenshotPath = path.join(outputDir, "assets", "site-overview.png");
 const screenshot = new Uint8Array(await fs.readFile(screenshotPath));
 const videoFramePath = path.join(outputDir, "assets", "video-frame.png");
@@ -147,7 +147,7 @@ function note(slide, value) {
   const s = deck.slides.add(); s.background.fill = C.bg; title(s, "产品结构：同一站点承载两种核心任务", "资讯消费与内容生产相互衔接，但页面职责清晰分离");
   const cols = [
     { x: 75, label: "AI 新闻日报", num: "01", body: ["浏览当日与历史精选", "查看摘要与为什么重要", "进入原文继续核实"] },
-    { x: 455, label: "内容解析", num: "02", body: ["粘贴文字或公开链接", "上传 TXT / MD 文本", "生成标题、摘要、解读"] },
+    { x: 455, label: "内容解析", num: "02", body: ["统一入口 /video-create", "文字、HTTPS 链接、TXT / MD", "新闻和非新闻材料均可处理"] },
     { x: 835, label: "视频工作台", num: "03", body: ["配置时长、画幅与风格", "确认费用后提交任务", "预览并下载有声视频"] },
   ];
   cols.forEach((c, i) => {
@@ -179,7 +179,7 @@ function note(slide, value) {
 {
   const s = deck.slides.add(); s.background.fill = C.bg; title(s, "核心流程：四步把材料变成可下载视频", "每一步都有明确输入、状态反馈和人工确认点");
   const steps = [
-    ["1", "输入材料", "文字、公开 HTTPS 链接、TXT / MD"],
+    ["1", "输入材料", "新闻、产品介绍、活动方案、课程内容等文字材料"],
     ["2", "生成文案", "标题、摘要、核心解读，可人工调整"],
     ["3", "设置视频", "5 / 10 / 30 秒、比例、风格、声音"],
     ["4", "确认并导出", "确认扣费、等待生成、预览和下载"],
@@ -255,14 +255,14 @@ function note(slide, value) {
 
 // 09 Operation
 {
-  const s = deck.slides.add(); s.background.fill = C.bg; title(s, "操作说明：生成一支有字幕、有音乐、有声音的视频", "字幕目前由模型画面与提示词控制，发布前仍需人工检查可读性与音量");
-  const left = ["打开“视频创作”页面", "粘贴素材或公开链接，也可上传 TXT / MD", "点击生成文案并检查标题、摘要和核心解读", "选择 30 秒、画幅、风格与“旁白 + 背景音乐”"];
-  const right = ["点击生成视频，阅读费用提示", "明确确认扣费后提交一次任务", "等待状态从处理中变为已完成", "播放检查字幕、旁白、音乐，再下载 MP4"];
+  const s = deck.slides.add(); s.background.fill = C.bg; title(s, "材料入口与视频操作", "新闻和非新闻材料统一从 /video-create 进入，当前优先处理可提取的文字内容");
+  const left = ["打开“视频创作”页面", "直接粘贴产品、活动、课程、企业或故事文字", "输入公开 HTTPS 网页链接，或上传 TXT / MD", "生成标题、摘要和核心解读，再人工修改"];
+  const right = ["选择 5 / 10 / 30 秒、画幅、风格和声音", "确认费用后只提交一次生成任务", "播放检查字幕、旁白和音乐，再下载 MP4", "PDF、Word、Excel、PPT、音视频需先转成文字"];
   box(s, 70, 190, 545, 410, C.panel, 22, C.line);
   box(s, 665, 190, 545, 410, C.panel, 22, C.line);
-  text(s, "生成前", 100, 220, 200, 32, 24, C.green, { bold: true });
+  text(s, "导入入口", 100, 220, 200, 32, 24, C.green, { bold: true });
   addBullets(s, left, 100, 280, 465, 260, 18, C.text);
-  text(s, "生成后", 695, 220, 200, 32, 24, C.green, { bold: true });
+  text(s, "生成与限制", 695, 220, 200, 32, 24, C.green, { bold: true });
   addBullets(s, right, 695, 280, 465, 260, 18, C.text);
   footer(s, 9);
 }
@@ -367,7 +367,7 @@ await finalizePresentation({
   layoutArgs: ["--expected-slide-size-emu", "12192000,6858000", "--validate-bullet-geometry", "--validate-heading-fit"],
   fontPolicy: { basis: "design", families: [FONT, MONO] },
   verifyArtifactToolImport: true,
-  receiptPath: path.join(buildDir, "presentation-v3.validation.json"),
+  receiptPath: path.join(buildDir, "presentation-v4.validation.json"),
 });
 
 console.log(finalPptx);

@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 
-$pptxPath = (Resolve-Path 'reports\AI新闻日报网站设计与部署汇报-基础版-v3.pptx').Path
+$pptxPath = (Resolve-Path 'reports\AI新闻日报网站设计与部署汇报-基础版-v4.pptx').Path
 $videoPath = (Resolve-Path 'media\ai-news-video-30s.mp4').Path
 $outputPath = Join-Path (Split-Path $pptxPath) 'AI新闻日报网站设计与部署汇报.pptx'
 if (Test-Path -LiteralPath $outputPath) {

@@ -37,4 +37,5 @@ next-env.d.ts
 /outputs/
 /work/
 /.ppt-build/
+/.docx-render-*/
 /reports/node_modules/
